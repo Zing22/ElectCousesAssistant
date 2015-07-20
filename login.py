@@ -1,5 +1,18 @@
 #-*- coding:utf-8 -*-
 
+##############################################
+# Filename: login.py
+# Mtime: 2015/7/20 16:13
+# Description:
+#    声明定义了 Login类 实现具体的登陆操作
+#    包括：
+#         1. 获取cookie
+#         2. 拉取验证码
+#         3. 构造header 和 url
+#         4. 发送网页请求 和 接受返回
+# Author: Zing
+##############################################
+
 import urllib,urllib2
 import cookielib
 import Image
