@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'login.ui'
-#
-# Created by: PyQt4 UI code generator 4.11.4
-#
-# WARNING! All changes made in this file will be lost!
+##############################################
+# Filename: loginDialog.py
+# Mtime: 2015/7/20 16:17
+# Description:
+#    本文件由 Qt designer 生成的ui文件转换而来
+#    通过继承为QLable添加了点击信号
+#    用于验证码点击切换功能
+#    点击checkbox会启用或禁用登陆按钮
+#    通过绑定信号和槽实现
+# Author: Zing
+##############################################
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
@@ -28,6 +34,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+#为QLable添加点击信号
 class MyQLabel(QLabel):
     clicked = pyqtSignal(str)
     def __init__(self,parent=None):
@@ -37,6 +44,10 @@ class MyQLabel(QLabel):
         self.clicked.emit('refresh!')
 
 class Ui_LoginDialog(QDialog):
+    def __init__(self,parent=None):
+        super(Ui_LoginDialog, self).__init__(parent)
+        self.setupUi(self)
+
     def setupUi(self, LoginDialog):
         LoginDialog.setObjectName(_fromUtf8("LoginDialog"))
         LoginDialog.resize(400, 330)
@@ -97,6 +108,7 @@ class Ui_LoginDialog(QDialog):
         self.cancel = QtGui.QPushButton(LoginDialog)
         self.cancel.setGeometry(QtCore.QRect(40, 270, 330, 40))
         self.cancel.setObjectName(_fromUtf8("cancel"))
+        self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint|Qt.WindowCloseButtonHint)
 
         self.retranslateUi(LoginDialog)
         QtCore.QMetaObject.connectSlotsByName(LoginDialog)
@@ -122,9 +134,7 @@ class Ui_LoginDialog(QDialog):
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
-    LoginDialog = QtGui.QDialog()
-    ui = Ui_LoginDialog()
-    ui.setupUi(LoginDialog)
-    LoginDialog.show()
+    LD = Ui_LoginDialog()
+    LD.show()
     sys.exit(app.exec_())
 
