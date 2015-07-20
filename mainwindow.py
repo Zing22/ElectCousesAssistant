@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
-#
-# Created by: PyQt4 UI code generator 4.11.4
-#
-# WARNING! All changes made in this file will be lost!
+##############################################
+# Filename: mainwindow.py
+# Mtime: 2015/7/20 16:11
+# Description:
+#    本文件由 Qt designer 生成的ui文件转换而来
+#    定义了主窗口界面主要构造
+#    添加了两个TableWidget的列表头
+# Author: Zing
+##############################################
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
@@ -66,10 +70,27 @@ class Ui_MainWindow(object):
         self.tableWidget2 = QtGui.QTableWidget(self.centralwidget)
         self.tableWidget2.setGeometry(QtCore.QRect(5, 340, 790, 200))
         self.tableWidget2.setObjectName(_fromUtf8("tableWidget2"))
+
+        self.List_1_lable = QtGui.QLabel(self.centralwidget)
+        self.List_1_lable.setGeometry(QtCore.QRect(5, 120, 790, 200))
+        self.List_1_lable.setObjectName(_fromUtf8("List_1_lable"))
+        self.List_1_lable.setVisible(False)
+        self.List_2_lable = QtGui.QLabel(self.centralwidget)
+        self.List_2_lable.setGeometry(QtCore.QRect(5, 340, 790, 200))
+        self.List_2_lable.setObjectName(_fromUtf8("List_2_lable"))
+        self.List_2_lable.setPixmap(QPixmap("./image/please.png"))
+
+        self.hideBTN = QtGui.QPushButton(self.centralwidget)
+        self.hideBTN.setGeometry(QtCore.QRect(0, 543, 250, 46))
+        self.hideBTN.setObjectName(_fromUtf8("hideBTN"))
         self.runBTN = QtGui.QPushButton(self.centralwidget)
-        self.runBTN.setGeometry(QtCore.QRect(0, 543, 800, 46))
+        self.runBTN.setGeometry(QtCore.QRect(250, 543, 300, 46))
         self.runBTN.setObjectName(_fromUtf8("runBTN"))
+        self.showHadBTN = QtGui.QPushButton(self.centralwidget)
+        self.showHadBTN.setGeometry(QtCore.QRect(550, 543, 250, 46))
+        self.showHadBTN.setObjectName(_fromUtf8("showHadBTN"))
         self.runBTN.setDefault(True)
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -84,7 +105,9 @@ class Ui_MainWindow(object):
         self.ZHxqBTN.setText(_translate("MainWindow", "珠海校区", None))
         self.listName1.setText(_translate("MainWindow", "可选课程", None))
         self.listName2.setText(_translate("MainWindow", "准备选课", None))
+        self.hideBTN.setText(_translate("MainWindow", "隐藏无效", None))
         self.runBTN.setText(_translate("MainWindow", "开始选课！", None))
+        self.showHadBTN.setText(_translate("MainWindow", "查看已选", None))
         self.setTables()
 
     def setTables(self):
@@ -102,8 +125,8 @@ class Ui_MainWindow(object):
         self.tableWidget1.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableWidget1.setSelectionBehavior(QTableWidget.SelectRows)
         self.tableWidget1.setColumnWidth(0, 60)
-        self.tableWidget1.setColumnWidth(1, 235)
-        self.tableWidget1.setColumnWidth(2, 155)
+        self.tableWidget1.setColumnWidth(1, 230)
+        self.tableWidget1.setColumnWidth(2, 150)
         self.tableWidget1.setColumnWidth(3, 60)
         self.tableWidget1.setColumnWidth(6, 60)
         self.tableWidget1.setAlternatingRowColors(True)
@@ -124,8 +147,8 @@ class Ui_MainWindow(object):
         self.tableWidget2.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableWidget2.setSelectionBehavior(QTableWidget.SelectRows)
         self.tableWidget2.setColumnWidth(0, 60)
-        self.tableWidget2.setColumnWidth(1, 235)
-        self.tableWidget2.setColumnWidth(2, 155)
+        self.tableWidget2.setColumnWidth(1, 230)
+        self.tableWidget2.setColumnWidth(2, 150)
         self.tableWidget2.setColumnWidth(3, 60)
         self.tableWidget2.setColumnWidth(6, 60)
         self.tableWidget2.setAlternatingRowColors(True)
