@@ -1,5 +1,19 @@
 # -*- coding: utf-8 -*-
 
+##############################################
+# Filename: threads.py
+# Mtime: 2015/7/20 16:28
+# Description:
+#    多线程模块
+#    每个类继承QThread类
+#    改写其中的run函数，实现所需功能
+#    某些需要返回信号通知主线程的
+#    添加了信号，在主进程声明的时候连接槽
+#    某些添加了槽，可以外部控制循环结束
+#    具体作用在类的声明上有注释
+# Author: Zing
+##############################################
+
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -49,6 +63,7 @@ class thread_getPage(QThread):
         url ,header = self.sumReq.bulidCheckHeader(self.kclb,self.xqm)
         print "get url and header!"
         pageResp = self.sumReq.getPage(url,header)
+        print "get response!"
         if pageResp:
             pro = ProData()
             data = pro.getDataList(pageResp)
@@ -74,6 +89,36 @@ class thread_run(QThread):
     def stopSum(self):
         print 'user stop'
         self.smq.runFlag = False
+
+#获取已选列表
+class thread_showHad(QThread):
+    finished = QtCore.pyqtSignal(list)
+
+    def __init__(self,lo):
+        super(thread_showHad, self).__init__()
+        self.sumReq = SummitReq(lo)
+        self.datas = list()
+
+    def run(self):
+        url ,header = self.sumReq.bulidCheckHeader(30,4)
+        print "get url and header!"
+        pageResp = self.sumReq.getPage(url,header)
+        if pageResp:
+            pro = ProData()
+            self.datas.append(pro.getHadDataList(pageResp))
+        else:
+            self.datas.append(0)
+        url ,header = self.sumReq.bulidCheckHeader(21,4)
+        print "get url and header!"
+        pageResp = self.sumReq.getPage(url,header)
+        if pageResp:
+            pro = ProData()
+            self.datas.append(pro.getHadDataList(pageResp))
+        else:
+            self.datas.append(0)
+        self.finished.emit(self.datas)
+        
+
 
 if __name__ == '__main__':
     print "hello world~"
