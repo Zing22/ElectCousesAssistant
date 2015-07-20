@@ -1,5 +1,18 @@
 #-*- coding:utf-8 -*-
 
+##############################################
+# Filename: summitReq.py
+# Mtime: 2015/7/20 16:25
+# Description:
+#    本模块负责获取课程列表
+#    同样是构造header和url然后发送请求
+#    url有两个关键点 校区 和 课程类型
+#    分别通过两个变量控制
+#    持续post选课请求的间隔为7
+#    可以外部中断（信号控制flag变为假）
+# Author: Zing
+##############################################
+
 from login import Login
 import urllib,urllib2
 import cookielib
@@ -50,7 +63,7 @@ class SummitReq(QtCore.QObject):
             #print "Return content", e.read()
             return False
         except:
-        	return False
+            return False
 
     def submit(self,LessonIds,kclb=21):
         url = 'http://uems.sysu.edu.cn/elect/s/courses?kclb=%s&xnd=2015-2016&xq=1&fromSearch=false&sid=%s' % (kclb,self.sid)
@@ -74,7 +87,7 @@ class SummitReq(QtCore.QObject):
         while self.runFlag and LessonIds :
             print 'LessonIds:',LessonIds
             for LessonId in LessonIds:
-            	print 'post:%s' % LessonId
+                print 'post:%s' % LessonId
                 postData = {
                             'jxbh':LessonId,\
                             'sid': self.sid,\
@@ -88,7 +101,7 @@ class SummitReq(QtCore.QObject):
                 except urllib2.URLError,e:
                     print '['+str(e.code)+']',e.reason
                 except:
-                	print 'other error!'
+                    print 'other error!'
                 url, header = self.bulidCheckHeader(21, 4)
                 page = self.getPage(url, header)
                 if self.checkPage(LessonId,page):
@@ -150,7 +163,7 @@ if __name__ == '__main__':
     print lo.getSid(username, password, j_code)
     subm = SummitReq(lo)
     LessonIds = ['35000192151001','35000123151002','35000192151003'\
-    			,'35000192151023','35000152151003','35000190151003']
+                ,'35000192151023','35000152151003','35000190151003']
     subm.submit(LessonIds)
 
 
