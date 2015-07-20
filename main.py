@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
 
+##############################################
+# Filename: main.py
+# Mtime: 2015/7/20 16:28
+# Description:
+#    声明和定义有完整功能的 登陆窗口类 和 主窗口类
+#    两个窗口类 都是用于处理 点击GUI 事件
+#    具体的工作交给其他模块实现
+#    耗时的操作使用了多进程
+# Author: Zing
+##############################################
+
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -8,7 +19,8 @@ import sys
 from login import Login
 from mainwindow import Ui_MainWindow
 from loginDialog import Ui_LoginDialog
-from threads import thread_getCAPTCHA,thread_post,thread_getPage,thread_run
+from threads import thread_getCAPTCHA,thread_post,thread_getPage,thread_run,thread_showHad
+from showHad_ui import HadWidget
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -30,7 +42,6 @@ class LoginDialog(Ui_LoginDialog):
         self.lo = Login()
         self.lo.getCookie()
         self.readloadCode()
-        self.setupUi(self)
         self.login.clicked.connect(self.loginFun)
         self.j_codeLabel.clicked.connect(self.readloadCode)
         self.j_codeLabel.resize(121,41)
@@ -88,12 +99,13 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
         self.connectBYNs() #连接槽和信号
         self.kclbShow = "公选" #用于标题处理
         self.xqShow = "东校区"
-        self.virsion = 'v0.982'
+        self.virsion = 'v1.02 Beta'
         self.setTitle() #更新标题
         self.tableWidget1.cellDoubleClicked.connect(self.addToTableTwo)
         self.tableWidget2.cellDoubleClicked.connect(self.deleteFromTableTwo)
         self.successSelect = 0
         self.tryTimes = 0
+        self.hide = False
 
     def connectBYNs(self):
         self.gongxuanBTN.clicked.connect(self.selectGX)
@@ -105,11 +117,18 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
         self.gongxuanBTN.setDisabled(True)
         self.DxqBTN.setDisabled(True)
         self.runBTN.clicked.connect(self.runrunrun)
+        self.hideBTN.clicked.connect(self.setHide)
+        self.showHadBTN.clicked.connect(self.showHadClicke)
 
     def setTitle(self):
         title = "选课小助手 - %s - %s - %s" % (self.xqShow,self.kclbShow,self.virsion)
         self.setWindowTitle(_translate("MainWindow", title, None))
         self.runBTN.setDisabled(True)
+        self.hideBTN.setDisabled(True)
+        self.showHadBTN.setDisabled(True)
+        #提示图片
+        self.List_1_lable.setPixmap(QPixmap("./image/loading.png"))
+        self.List_1_lable.setVisible(True)
         self.tem_getPage = thread_getPage(self.lo,self.kclb,self.xqm)
         self.tem_getPage.start()
         self.tem_getPage.signal.connect(self.fillTableOne)
@@ -140,6 +159,8 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
         self.tableWidget1.setRowCount(0)
         self.data = data
         for x in data:
+            if self.hide and (x['free'] == '0' or x['conflict'] == 'Yes'):
+                continue
             self.tableWidget1.setRowCount(self.maxLength_1+1)
             self.tableWidget1.setItem(self.maxLength_1, 0, QTableWidgetItem(self.Mytranslate(x['campus'])))
             self.tableWidget1.setItem(self.maxLength_1, 1, QTableWidgetItem(self.Mytranslate(x['name'])))
@@ -159,6 +180,14 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
                 self.tableWidget1.item(self.maxLength_1,i).setTextAlignment(Qt.AlignHCenter| Qt.AlignVCenter)
             self.maxLength_1 += 1
         self.runBTN.setDisabled(False)
+        self.hideBTN.setDisabled(False)
+        self.showHadBTN.setDisabled(False)
+        #如果没有课程则显示无数据
+        if self.maxLength_1:
+            self.List_1_lable.setVisible(False)
+        else:
+            self.List_1_lable.setVisible(True)
+            self.List_1_lable.setPixmap(QPixmap("./image/nodata.png"))
 
     def addToTableTwo(self,row,col):
         print 'clicked:(%s,%s)'%(row,col)
@@ -184,12 +213,17 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
         for i in range(7):
             self.tableWidget2.item(self.maxLength_2,i).setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.maxLength_2 += 1
+        if self.maxLength_2:
+            self.List_2_lable.setVisible(False)
 
     def deleteFromTableTwo(self,row,col):
         print 'delete:(%s,%s)'%(row,col)
         self.waitingDict.pop(self.tableWidget2.item(row,1).text())
         self.tableWidget2.removeRow(row)
         self.maxLength_2 -= 1
+
+        if not self.maxLength_2:
+            self.List_2_lable.setVisible(True)
 
     def selectGX(self):
         self.kclb = 30
@@ -331,6 +365,28 @@ class MyMainWindow(QMainWindow,Ui_MainWindow):
         title = "选课小助手 - 成功选课:%s门 - 第%s次尝试 - %s" % \
             (self.successSelect,self.tryTimes,self.virsion)
         self.setWindowTitle(_translate("MainWindow", title, None))
+
+    def setHide(self):
+        self.hide = not self.hide
+        if self.hide:
+            self.hideBTN.setText(self.Mytranslate(u'显示无效'))
+        else:
+            self.hideBTN.setText(self.Mytranslate(u'隐藏无效'))
+        self.runBTN.setDisabled(True)
+        self.hideBTN.setDisabled(True)
+        self.showHadBTN.setDisabled(True)
+        self.fillTableOne(self.data)
+
+    def showHadClicke(self):
+        self.tem_show = thread_showHad(self.lo)
+        self.tem_show.finished.connect(self.showHad)
+        self.tem_show.start()
+
+    def showHad(self,datas):
+        self.tem_show.quit()
+        #新建窗口，处理数据交给HadWidget
+        self.showHadWidget = HadWidget(datas)
+        self.showHadWidget.show()
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
